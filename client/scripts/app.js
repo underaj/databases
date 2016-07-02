@@ -4,7 +4,7 @@ var app = {
   //TODO: The current 'toggleFriend' function just toggles the class 'friend'
   //to all messages sent by the user
   server: '/classes/messages',
-  username: 'aj',
+  username: 'emily',
   roomname: 'lobby',
   lastMessageId: 0,
   friends: {},

@@ -11,16 +11,19 @@ var connection = mysql.createConnection({
   database: 'chat'
 });
 
-exports.postMessage = function(messageObj) {
-  connection.connect();
+exports.postMessage = function(messageObj, res) {
   var room = messageObj.roomname;
   var message = messageObj.message;
   var username = messageObj.username;
   var cb = function(userID) {
+    console.log(userID);
     connection.query('INSERT INTO messages SET ?', {message: message, room: room, 'user_id': userID}, function(err, row, fields) {
       if (err) {
         console.log(err); 
       } else {
+        console.log(row);
+        res.writeHead(200);
+        res.end();
       }
     });
   };
@@ -30,7 +33,9 @@ exports.postMessage = function(messageObj) {
   // use user id in messages table
   connection.query('SELECT u_id FROM users WHERE name = ?', username, function(err, rows) {
     if (err) {
+      console.log('problem here');
     } else {
+      console.log(rows);
       if (rows.length === 0) {
         connection.query('INSERT INTO users SET ?', {name: username}, function(err, result, fields) {
           if (err) {
@@ -43,6 +48,29 @@ exports.postMessage = function(messageObj) {
         cb(rows[0].u_id);
       }
     }
+  });
+};
+
+exports.postUser = function(userObj, res) {
+  var username = userObj.username;
+  connection.query('SELECT u_id FROM users WHERE name = ?', username, function(err, rows) {
+    if (err) {
+      console.log(err);
+    } else {
+      if (rows.length === 0) {
+        connection.query('INSERT INTO users SET ?', {name: username}, function(err, result, fields) {
+          if (err) {
+            console.log('cant insert name');
+          } else {
+            res.writeHead(200);
+            res.end();
+          }
+        });
+      } else {
+        res.writeHead(200);
+        res.end();
+      }
+    } 
   });
 };
 
