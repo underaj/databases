@@ -16,12 +16,10 @@ exports.postMessage = function(messageObj, res) {
   var message = messageObj.message;
   var username = messageObj.username;
   var cb = function(userID) {
-    console.log(userID);
     connection.query('INSERT INTO messages SET ?', {message: message, roomname: room, 'user_id': userID}, function(err, row, fields) {
       if (err) {
         console.log(err); 
       } else {
-        console.log(row);
         res.writeHead(200);
         res.end();
       }
@@ -35,7 +33,6 @@ exports.postMessage = function(messageObj, res) {
     if (err) {
       console.log('problem here');
     } else {
-      console.log(rows);
       if (rows.length === 0) {
         connection.query('INSERT INTO users SET ?', {username: username}, function(err, result, fields) {
           if (err) {
@@ -79,15 +76,15 @@ exports.postUser = function(userObj, res) {
 
 exports.getMessages = function(res) {
   console.log('get here');
-  connection.query('SELECT m.message, m.room, u.name FROM messages m INNER JOIN users u ON (u.u_id = m.user_id)', function(error, rows) {
+  connection.query('SELECT m.m_id,m.message, m.roomname, u.username FROM messages m INNER JOIN users u ON (u.u_id = m.user_id)', function(error, rows) {
     if (error) {
       console.log('error here');
     } else {
-      console.log('here');
-      // console.log(rows);
-      // res.send({})
-      res.writeHead(200);
-      res.end();
+      var results = rows.map(function(row) {
+        return {objectId: row.m_id, message: row.message, roomname: row.roomname, username: row.username};
+      });
+      var body = {results: results};
+      res.send(JSON.stringify(body));
     }
   });
 };

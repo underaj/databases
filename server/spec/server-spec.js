@@ -72,7 +72,7 @@ describe('Persistent Node Chat Server', function() {
     // here depend on the schema you design, so I'll leave
     // them up to you. */
     var queryString = 'INSERT INTO messages SET ?';
-    var queryArgs = {message: 'Men like you can never change!', room: 'main', 'user_id': 2};
+    var queryArgs = {message: 'Men like you can never change!', roomname: 'main', 'user_id': 1};
 
     dbConnection.query(queryString, queryArgs, function(err) {
       if (err) { throw err; }
@@ -81,8 +81,9 @@ describe('Persistent Node Chat Server', function() {
       // the message we just inserted:
       request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
         var messageLog = JSON.parse(body);
-        expect(messageLog[0].message).to.equal('Men like you can never change!');
-        expect(messageLog[0].roomname).to.equal('main');
+        console.log(messageLog);
+        expect(messageLog.results[0].message).to.equal('Men like you can never change!');
+        expect(messageLog.results[0].roomname).to.equal('main');
         done();
       });
     });
