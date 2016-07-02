@@ -17,7 +17,7 @@ exports.postMessage = function(messageObj, res) {
   var username = messageObj.username;
   var cb = function(userID) {
     console.log(userID);
-    connection.query('INSERT INTO messages SET ?', {message: message, room: room, 'user_id': userID}, function(err, row, fields) {
+    connection.query('INSERT INTO messages SET ?', {message: message, roomname: room, 'user_id': userID}, function(err, row, fields) {
       if (err) {
         console.log(err); 
       } else {
@@ -31,13 +31,13 @@ exports.postMessage = function(messageObj, res) {
   // if exists get the user id
   // if does not exist, insert the username into user table, get the user id
   // use user id in messages table
-  connection.query('SELECT u_id FROM users WHERE name = ?', username, function(err, rows) {
+  connection.query('SELECT u_id FROM users WHERE username = ?', username, function(err, rows) {
     if (err) {
       console.log('problem here');
     } else {
       console.log(rows);
       if (rows.length === 0) {
-        connection.query('INSERT INTO users SET ?', {name: username}, function(err, result, fields) {
+        connection.query('INSERT INTO users SET ?', {username: username}, function(err, result, fields) {
           if (err) {
             console.log('cant insert name');
           } else {
@@ -53,12 +53,12 @@ exports.postMessage = function(messageObj, res) {
 
 exports.postUser = function(userObj, res) {
   var username = userObj.username;
-  connection.query('SELECT u_id FROM users WHERE name = ?', username, function(err, rows) {
+  connection.query('SELECT u_id FROM users WHERE username = ?', username, function(err, rows) {
     if (err) {
       console.log(err);
     } else {
       if (rows.length === 0) {
-        connection.query('INSERT INTO users SET ?', {name: username}, function(err, result, fields) {
+        connection.query('INSERT INTO users SET ?', {username: username}, function(err, result, fields) {
           if (err) {
             console.log('cant insert name');
           } else {
@@ -71,6 +71,24 @@ exports.postUser = function(userObj, res) {
         res.end();
       }
     } 
+  });
+};
+
+// SELECT teachers.name FROM teachers INNER JOIN departments
+  // ON teachers.department = departments.id;
+
+exports.getMessages = function(res) {
+  console.log('get here');
+  connection.query('SELECT m.message, m.room, u.name FROM messages m INNER JOIN users u ON (u.u_id = m.user_id)', function(error, rows) {
+    if (error) {
+      console.log('error here');
+    } else {
+      console.log('here');
+      // console.log(rows);
+      // res.send({})
+      res.writeHead(200);
+      res.end();
+    }
   });
 };
 
