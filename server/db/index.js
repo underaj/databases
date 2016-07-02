@@ -11,22 +11,37 @@ var connection = mysql.createConnection({
   database: 'chat'
 });
 
-
-
-exports.postMessage = function(message) {
-  console.log('in postmessage');
+exports.postMessage = function(messageObj) {
   connection.connect();
-  var room = message.roomname;
-  var mes = message.message;
-  var user = 1;
+  var room = messageObj.roomname;
+  var message = messageObj.message;
+  var username = messageObj.username;
+  var cb = function(userID) {
+    connection.query('INSERT INTO messages SET ?', {message: message, room: room, 'user_id': userID}, function(err, row, fields) {
+      if (err) {
+        console.log(err); 
+      } else {
+      }
+    });
+  };
   // do a get from users table, check if exist
   // if exists get the user id
   // if does not exist, insert the username into user table, get the user id
   // use user id in messages table
-  connection.query('INSERT INTO messages SET ?', {message: mes, room: room, 'user_id': user}, function(err, rows, fields) {
+  connection.query('SELECT u_id FROM users WHERE name = ?', username, function(err, rows) {
     if (err) {
-      console.log(err); 
     } else {
+      if (rows.length === 0) {
+        connection.query('INSERT INTO users SET ?', {name: username}, function(err, result, fields) {
+          if (err) {
+            console.log('cant insert name');
+          } else {
+            cb(result.insertId);
+          }
+        });
+      } else {
+        cb(rows[0].u_id);
+      }
     }
   });
 };

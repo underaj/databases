@@ -15,12 +15,9 @@ CREATE TABLE messages (
   message VARCHAR(100) NOT NULL,
   room VARCHAR(100) NOT NULL,
   user_id INT NOT NULL,
-  PRIMARY KEY (m_id)
+  PRIMARY KEY (m_id),
   FOREIGN KEY (user_id) REFERENCES users(u_id)
 );
-
-
-
 
 /* Create other tables and define schemas for them here! */
 
