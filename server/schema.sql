@@ -12,6 +12,7 @@ CREATE TABLE messages (
   /* Describe your table here.*/
   m_id INT NOT NULL AUTO_INCREMENT,
   message VARCHAR(100) NOT NULL,
+  room VARCHAR(100) NOT NULL,
   user_id INT NOT NULL,
   PRIMARY KEY (m_id),
   FOREIGN KEY (user_id) REFERENCES users(u_id)

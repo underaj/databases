@@ -3,15 +3,15 @@ var app = {
 
   //TODO: The current 'toggleFriend' function just toggles the class 'friend'
   //to all messages sent by the user
-  server: 'https://api.parse.com/1/classes/messages/',
-  username: 'anonymous',
+  server: '/classes/messages',
+  username: 'emily',
   roomname: 'lobby',
   lastMessageId: 0,
   friends: {},
 
   init: function() {
     // Get username
-    app.username = window.location.search.substr(10);
+    // app.username = window.location.search.substr(10);
 
     // Cache jQuery selectors
     app.$message = $('#message');
@@ -45,7 +45,7 @@ var app = {
       contentType: 'application/json',
       success: function (data) {
         // Trigger a fetch to update the messages, pass true to animate
-        app.fetch();
+        // app.fetch();
       },
       error: function (data) {
         console.error('chatterbox: Failed to send message', data);
@@ -60,6 +60,8 @@ var app = {
       contentType: 'application/json',
       data: { order: '-createdAt'},
       success: function(data) {
+        data = JSON.parse(data);
+        console.log(data);
         // Don't bother if we have nothing to work with
         if (!data.results || !data.results.length) { return; }
 
@@ -160,7 +162,7 @@ var app = {
       }
 
       var $message = $('<br><span/>');
-      $message.text(data.text).appendTo($chat);
+      $message.text(data.message).appendTo($chat);
 
       // Add the message to the UI
       app.$chats.append($chat);
@@ -213,7 +215,7 @@ var app = {
   handleSubmit: function(evt) {
     var message = {
       username: app.username,
-      text: app.$message.val(),
+      message: app.$message.val(),
       roomname: app.roomname || 'lobby'
     };
 
