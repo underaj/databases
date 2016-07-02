@@ -11,82 +11,8 @@ var connection = mysql.createConnection({
   database: 'chat'
 });
 
-exports.postMessage = function(messageObj, res) {
-  var room = messageObj.roomname;
-  var message = messageObj.message;
-  var username = messageObj.username;
-  var cb = function(userID) {
-    connection.query('INSERT INTO messages SET ?', {message: message, roomname: room, 'user_id': userID}, function(err, row, fields) {
-      if (err) {
-        console.log(err); 
-      } else {
-        res.writeHead(200);
-        res.end();
-      }
-    });
-  };
-  // do a get from users table, check if exist
-  // if exists get the user id
-  // if does not exist, insert the username into user table, get the user id
-  // use user id in messages table
-  connection.query('SELECT u_id FROM users WHERE username = ?', username, function(err, rows) {
-    if (err) {
-      console.log('problem here');
-    } else {
-      if (rows.length === 0) {
-        connection.query('INSERT INTO users SET ?', {username: username}, function(err, result, fields) {
-          if (err) {
-            console.log('cant insert name');
-          } else {
-            cb(result.insertId);
-          }
-        });
-      } else {
-        cb(rows[0].u_id);
-      }
-    }
-  });
-};
-
-exports.postUser = function(userObj, res) {
-  var username = userObj.username;
-  connection.query('SELECT u_id FROM users WHERE username = ?', username, function(err, rows) {
-    if (err) {
-      console.log(err);
-    } else {
-      if (rows.length === 0) {
-        connection.query('INSERT INTO users SET ?', {username: username}, function(err, result, fields) {
-          if (err) {
-            console.log('cant insert name');
-          } else {
-            res.writeHead(200);
-            res.end();
-          }
-        });
-      } else {
-        res.writeHead(200);
-        res.end();
-      }
-    } 
-  });
-};
-
+exports.connection = connection;
 // SELECT teachers.name FROM teachers INNER JOIN departments
   // ON teachers.department = departments.id;
-
-exports.getMessages = function(res) {
-  console.log('get here');
-  connection.query('SELECT m.m_id,m.message, m.roomname, u.username FROM messages m INNER JOIN users u ON (u.u_id = m.user_id)', function(error, rows) {
-    if (error) {
-      console.log('error here');
-    } else {
-      var results = rows.map(function(row) {
-        return {objectId: row.m_id, message: row.message, roomname: row.roomname, username: row.username};
-      });
-      var body = {results: results};
-      res.send(JSON.stringify(body));
-    }
-  });
-};
 
 
