@@ -6,23 +6,25 @@ var mysql = require('mysql');
 
 var connection = mysql.createConnection({
   host: 'localhost',
-  port: 3000,
   user: 'root',
   password: '',
   database: 'chat'
 });
 
+
+
 exports.postMessage = function(message) {
+  console.log('in postmessage');
   connection.connect();
   var room = message.roomname;
   var mes = message.message;
   var user = 1;
-  console.log(mes);
-  connection.query('INSERT INTO messages (message, room, user_id) VALUE (' + mes + ',' + room + ',' + user + ') ?', function(err, rows, fields) {
-  if (err) throw err;
-    console.log('The solution is: ', rows[0].solution);
+  connection.query('INSERT INTO messages SET ?', {message: mes, room: room, 'user_id': user}, function(err, rows, fields) {
+    if (err) {
+      console.log(err); 
+    } else {
+    }
   });
-  connection.end();
 };
 
 

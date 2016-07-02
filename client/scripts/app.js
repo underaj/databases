@@ -61,7 +61,6 @@ var app = {
       data: { order: '-createdAt'},
       success: function(data) {
         data = JSON.parse(data);
-        console.log(data);
         // Don't bother if we have nothing to work with
         if (!data.results || !data.results.length) { return; }
 
