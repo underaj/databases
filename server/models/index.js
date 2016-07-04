@@ -53,13 +53,12 @@ module.exports = {
     // Ditto as above.
     get: function () {},
     post: function (userName, sendResponse) {
-      var username = userObj.username;
-      db.connection.query('SELECT u_id FROM users WHERE username = ?', username, function(err, rows) {
+      db.connection.query('SELECT u_id FROM users WHERE username = ?', userName, function(err, rows) {
         if (err) {
           console.log(err);
         } else {
           if (rows.length === 0) {
-            db.connection.query('INSERT INTO users SET ?', {username: username}, function(err, result, fields) {
+            db.connection.query('INSERT INTO users SET ?', {username: userName}, function(err, result, fields) {
               if (err) {
                 console.log('cant insert name');
               } else {

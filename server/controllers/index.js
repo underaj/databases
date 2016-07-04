@@ -7,7 +7,6 @@ module.exports = {
       });
     }, // a function which handles a get request for all messages
     post: function (req, res) {
-      console.log(typeof req.body);
       models.messages.post(req.body, function() {
         res.writeHead(200);
         res.end();
