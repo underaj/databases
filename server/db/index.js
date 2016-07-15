@@ -11,7 +11,7 @@ var connection = mysql.createConnection({
   database: 'chat'
 });
 
-exports.connection = connection;
+module.exports = connection;
 // SELECT teachers.name FROM teachers INNER JOIN departments
   // ON teachers.department = departments.id;
 

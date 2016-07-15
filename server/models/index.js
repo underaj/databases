@@ -1,9 +1,9 @@
-var db = require('../db');
+var connection = require('../db');
 
 module.exports = {
   messages: {
     get: function (cb) {
-      db.connection.query('SELECT m.m_id,m.message, m.roomname, u.username FROM messages m INNER JOIN users u ON (u.u_id = m.user_id)', function(error, rows) {
+      connection.query('SELECT m.m_id,m.message, m.roomname, u.username FROM messages m INNER JOIN users u ON (u.u_id = m.user_id)', function(error, rows) {
         if (error) {
           console.log('error here');
         } else {
@@ -20,7 +20,7 @@ module.exports = {
       var message = messageObj.message;
       var username = messageObj.username;
       var insertTo = function(userID) {
-        db.connection.query('INSERT INTO messages SET ?', {message: message, roomname: room, 'user_id': userID}, function(err, row, fields) {
+        connection.query('INSERT INTO messages SET ?', {message: message, roomname: room, 'user_id': userID}, function(err, row, fields) {
           if (err) {
             console.log(err); 
           } else {
@@ -29,12 +29,12 @@ module.exports = {
         });
       };
 
-      db.connection.query('SELECT u_id FROM users WHERE username = ?', username, function(err, rows) {
+      connection.query('SELECT u_id FROM users WHERE username = ?', username, function(err, rows) {
         if (err) {
           console.log('problem here');
         } else {
           if (rows.length === 0) {
-            db.connection.query('INSERT INTO users SET ?', {username: username}, function(err, result, fields) {
+            connection.connection.query('INSERT INTO users SET ?', {username: username}, function(err, result, fields) {
               if (err) {
                 console.log('cant insert name');
               } else {
@@ -53,12 +53,12 @@ module.exports = {
     // Ditto as above.
     get: function () {},
     post: function (userName, sendResponse) {
-      db.connection.query('SELECT u_id FROM users WHERE username = ?', userName, function(err, rows) {
+      connection.query('SELECT u_id FROM users WHERE username = ?', userName, function(err, rows) {
         if (err) {
           console.log(err);
         } else {
           if (rows.length === 0) {
-            db.connection.query('INSERT INTO users SET ?', {username: userName}, function(err, result, fields) {
+            connection.query('INSERT INTO users SET ?', {username: userName}, function(err, result, fields) {
               if (err) {
                 console.log('cant insert name');
               } else {
